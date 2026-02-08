@@ -57,6 +57,7 @@ const Drinks = () => {
     }
   };
 
+  // ✅ UPDATED: Better error handling for adding drinks
   const handleAddDrink = async (e) => {
     e.preventDefault();
     try {
@@ -67,6 +68,8 @@ const Drinks = () => {
       formData.append('category', newDrink.category);
       formData.append('preparation_time', newDrink.preparation_time);
       formData.append('is_available', newDrink.is_available);
+      
+      // ✅ Only append image if one was selected
       if (newDrink.image) {
         formData.append('image', newDrink.image);
       }
@@ -77,10 +80,16 @@ const Drinks = () => {
       resetForm();
       fetchDrinks();
     } catch (error) {
-      toast.error('Failed to add drink item');
+      console.error('Create error:', error.response?.data); // ✅ Better logging
+      const errorMessage = error.response?.data?.detail 
+        || error.response?.data?.name?.[0] 
+        || error.response?.data?.category?.[0]
+        || 'Failed to add drink item';
+      toast.error(errorMessage);
     }
   };
 
+  // ✅ UPDATED: Fix image re-upload issue for editing
   const handleUpdateDrink = async (e) => {
     e.preventDefault();
     if (!selectedDrink) return;
@@ -93,6 +102,8 @@ const Drinks = () => {
       formData.append('category', newDrink.category);
       formData.append('preparation_time', newDrink.preparation_time);
       formData.append('is_available', newDrink.is_available);
+      
+      // ✅ ONLY append image if a new one was selected
       if (newDrink.image) {
         formData.append('image', newDrink.image);
       }
@@ -103,7 +114,11 @@ const Drinks = () => {
       resetForm();
       fetchDrinks();
     } catch (error) {
-      toast.error('Failed to update drink item');
+      console.error('Update error:', error.response?.data); // ✅ Better logging
+      const errorMessage = error.response?.data?.detail 
+        || error.response?.data?.name?.[0] 
+        || 'Failed to update drink item';
+      toast.error(errorMessage);
     }
   };
 

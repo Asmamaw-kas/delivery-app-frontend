@@ -57,7 +57,7 @@ const Foods = () => {
     }
   };
 
-  const handleAddFood = async (e) => {
+    const handleAddFood = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
@@ -77,9 +77,14 @@ const Foods = () => {
       resetForm();
       fetchFoods();
     } catch (error) {
-      toast.error('Failed to add food item');
+      console.error('Create error:', error.response?.data);
+      const errorMessage = error.response?.data?.detail 
+        || error.response?.data?.name?.[0] 
+        || 'Failed to add food item';
+      toast.error(errorMessage);
     }
   };
+
 
   const handleUpdateFood = async (e) => {
     e.preventDefault();
@@ -93,6 +98,8 @@ const Foods = () => {
       formData.append('category', newFood.category);
       formData.append('preparation_time', newFood.preparation_time);
       formData.append('is_available', newFood.is_available);
+      
+      // ✅ ONLY append image if a new one was selected
       if (newFood.image) {
         formData.append('image', newFood.image);
       }
@@ -103,7 +110,8 @@ const Foods = () => {
       resetForm();
       fetchFoods();
     } catch (error) {
-      toast.error('Failed to update food item');
+      console.error('Update error:', error.response?.data); // ✅ Better error logging
+      toast.error(error.response?.data?.detail || 'Failed to update food item');
     }
   };
 
@@ -230,7 +238,7 @@ const Foods = () => {
                   </p>
                 </div>
                 <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">
-                  {food.category?.name || 'Uncategorized'}
+                  {food.category_type || 'Food'}
                 </span>
               </div>
 

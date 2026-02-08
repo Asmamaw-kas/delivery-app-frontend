@@ -3,7 +3,7 @@ import axiosClient from './axiosClient';
 const adminApi = {
   // Dashboard stats
   getDashboardStats: () => {
-    return axiosClient.get('/admin/dashboard-stats/');
+    return axiosClient.get('/orders/admin/dashboard-stats/');
   },
   
   // Order management

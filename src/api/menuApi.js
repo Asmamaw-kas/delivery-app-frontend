@@ -30,6 +30,27 @@ const menuApi = {
       params: { search: query }
     });
   },
+
+  createMenuItem: (formData) => {
+    return axiosClient.post('/menu/items/create/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  updateMenuItem: (id, formData) => {
+    return axiosClient.patch(`/menu/items/${id}/update/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  deleteMenuItem: (id) => {
+    return axiosClient.delete(`/menu/items/${id}/update/`);
+  },
 };
+
 
 export default menuApi;
