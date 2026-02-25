@@ -35,7 +35,7 @@ const DrinkCard = ({ item, onOrder }) => {
       <div className="flex items-center justify-between mt-3 md:mt-4">
         <div>
           <span className="text-lg md:text-xl font-bold text-blue-600 dark:text-blue-400">
-            ${parseFloat(item.price).toFixed(2)}
+            {parseFloat(item.price).toFixed(2)} Br
           </span>
           <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
             {item.preparation_time} min

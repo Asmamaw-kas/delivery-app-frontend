@@ -138,15 +138,15 @@ const OrderPage = () => {
 
   const calculateDeliveryFee = () => {
     if (!useCustomLocation || distanceFromCafe === 0) {
-      return 2.99; // Base delivery fee
+      return 20; // Base delivery fee
     }
     
     // Add $1 for every 100 meters beyond base distance
     const baseDistance = 500; // 500 meters free
     const additionalDistance = Math.max(0, distanceFromCafe - baseDistance);
-    const additionalFee = Math.floor(additionalDistance / 100) * 1; // $1 per 100 meters
+    const additionalFee = Math.floor(additionalDistance / 100) * 10; // $1 per 100 meters
     
-    return 2.99 + additionalFee;
+    return 20 + additionalFee;
   };
 
   const calculateTotal = () => {
@@ -157,7 +157,7 @@ const OrderPage = () => {
     }, 0);
     
     const deliveryFee = calculateDeliveryFee();
-    const tax = subtotal * 0.08;
+    const tax = subtotal * 0.05;
     
     return {
       subtotal: subtotal.toFixed(2),
@@ -471,7 +471,7 @@ const OrderPage = () => {
                     <div className="flex-1">
                       <h4 className="font-bold text-gray-800 dark:text-white">{item.name || 'Unnamed Item'}</h4>
                       <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        ${formatPrice(item.price)} each
+                        {formatPrice(item.price)} each
                       </p>
                       {item.category_name && (
                         <p className="text-xs text-gray-500 dark:text-gray-500">
@@ -498,7 +498,7 @@ const OrderPage = () => {
                       </div>
                       
                       <div className="w-24 text-right">
-                        <p className="font-bold text-gray-800 dark:text-white">${formatPrice(calculateItemTotal(item))}</p>
+                        <p className="font-bold text-gray-800 dark:text-white">{formatPrice(calculateItemTotal(item))} Br</p>
                       </div>
                       
                       <button
@@ -517,19 +517,19 @@ const OrderPage = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
                       <span>Subtotal:</span>
-                      <span>${totals.subtotal}</span>
+                      <span>{totals.subtotal} Br</span>
                     </div>
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
                       <span>Delivery Fee:</span>
-                      <span>${totals.deliveryFee}</span>
+                      <span>{totals.deliveryFee} Br</span>
                     </div>
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                      <span>Tax (8%):</span>
-                      <span>${totals.tax}</span>
+                      <span>Tax (5%):</span>
+                      <span>{totals.tax} Br</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white">
                       <span>Total:</span>
-                      <span>${totals.total}</span>
+                      <span>{totals.total} </span>
                     </div>
                   </div>
                 </div>
@@ -697,17 +697,17 @@ const OrderPage = () => {
                           <div>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Delivery Fee</p>
                             <p className="text-lg font-semibold text-gray-800 dark:text-white">
-                              ${calculateDeliveryFee().toFixed(2)}
+                              {calculateDeliveryFee().toFixed(2)} Br
                               {distanceFromCafe > 500 && (
                                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                                  (Base $2.99 + ${(calculateDeliveryFee() - 2.99).toFixed(2)} distance fee)
+                                  (Base 20  + {(calculateDeliveryFee() - 20).toFixed(2)} distance fee)
                                 </span>
                               )}
                             </p>
                           </div>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          * $1 added for every 100 meters beyond 500m from café
+                          * 20 Br added for every 100 meters beyond 500m from café
                         </p>
                       </div>
                     )}
@@ -717,7 +717,7 @@ const OrderPage = () => {
                 {!useCustomLocation && (
                   <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      📦 Standard delivery fee of ${calculateDeliveryFee().toFixed(2)} will be applied.
+                      📦 Standard delivery fee of {calculateDeliveryFee().toFixed(2)} Br will be applied.
                       Enable custom location for precise distance-based pricing.
                     </p>
                   </div>
@@ -792,11 +792,11 @@ const OrderPage = () => {
                       <div>
                         <p className="font-medium text-gray-800 dark:text-white">{item.name || 'Unnamed Item'}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {item.quantity || 0} × ${formatPrice(item.price)}
+                          {item.quantity || 0} × {formatPrice(item.price)} Br
                         </p>
                       </div>
                       <p className="font-medium text-gray-800 dark:text-white">
-                        ${formatPrice(calculateItemTotal(item))}
+                        {formatPrice(calculateItemTotal(item))} Br
                       </p>
                     </div>
                   ))}
@@ -806,11 +806,11 @@ const OrderPage = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
                       <span>Subtotal:</span>
-                      <span>${totals.subtotal}</span>
+                      <span>{totals.subtotal} Br</span>
                     </div>
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
                       <span>Delivery Fee:</span>
-                      <span>${totals.deliveryFee}</span>
+                      <span>{totals.deliveryFee} Br</span>
                       {distanceFromCafe > 0 && (
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           ({Math.round(distanceFromCafe)} meters)
@@ -818,12 +818,12 @@ const OrderPage = () => {
                       )}
                     </div>
                     <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                      <span>Tax (8%):</span>
-                      <span>${totals.tax}</span>
+                      <span>Tax (5%):</span>
+                      <span>{totals.tax} Br</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white">
                       <span>Total:</span>
-                      <span>${totals.total}</span>
+                      <span>{totals.total} Br</span>
                     </div>
                   </div>
                 </div>

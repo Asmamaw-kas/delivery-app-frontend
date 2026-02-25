@@ -29,6 +29,34 @@ const OrderStatusCard = ({ order, onCancel, onConfirmDelivery, onContactCafe }) 
     });
   };
 
+  // Calculate order breakdown from items
+  const calculateOrderBreakdown = () => {
+    const subtotal = order.items?.reduce((sum, item) => {
+      return sum + (item.quantity * parseFloat(item.price || 0));
+    }, 0) || 0;
+    
+    // Use the delivery_fee from order if available, otherwise default to 20
+    const deliveryFee = parseFloat(order.delivery_fee) || 20;
+    
+    // Calculate tax (5% of subtotal)
+    const tax = subtotal * 0.05;
+    
+    // Total should match what was charged
+    const calculatedTotal = subtotal + deliveryFee + tax;
+    
+    // Use the actual total_amount from order if available
+    const total = calculatedTotal;
+    
+    return {
+      subtotal: subtotal.toFixed(2),
+      deliveryFee: deliveryFee.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2)
+    };
+  };
+
+  const breakdown = calculateOrderBreakdown();
+
   const getStatusButtons = () => {
     switch (order.status) {
       case 'pending':
@@ -151,19 +179,21 @@ const OrderStatusCard = ({ order, onCancel, onConfirmDelivery, onContactCafe }) 
         >
           {/* Items List */}
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">Items:</h4>
+            <h4 className="font-semibold mb-2 text-gray-800 dark:text-white">Items:</h4>
             <div className="space-y-2">
               {order.items?.map((item, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium">{item.menu_item_details?.name || 'Item'}</p>
+                    <p className="font-medium text-gray-800 dark:text-white">
+                      {item.menu_item_details?.name || item.name || 'Item'}
+                    </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {item.quantity} × ${parseFloat(item.price).toFixed(2)}
+                      {item.quantity} × {parseFloat(item.price).toFixed(2)} Br
                       {item.special_request && ` - ${item.special_request}`}
                     </p>
                   </div>
-                  <p className="font-medium">
-                    ${(item.quantity * parseFloat(item.price)).toFixed(2)}
+                  <p className="font-medium text-gray-800 dark:text-white">
+                    {(item.quantity * parseFloat(item.price)).toFixed(2)} Br
                   </p>
                 </div>
               ))}
@@ -173,38 +203,67 @@ const OrderStatusCard = ({ order, onCancel, onConfirmDelivery, onContactCafe }) 
           {/* Order Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 className="font-semibold mb-2">Delivery Address:</h4>
+              <h4 className="font-semibold mb-2 text-gray-800 dark:text-white">Delivery Address:</h4>
               <p className="text-gray-600 dark:text-gray-400">{order.delivery_address}</p>
+              {order.delivery_distance && (
+                <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                  📏 Distance: {order.delivery_distance} meters
+                </p>
+              )}
               {order.special_instructions && (
                 <div className="mt-2">
-                  <h4 className="font-semibold mb-1">Special Instructions:</h4>
+                  <h4 className="font-semibold mb-1 text-gray-800 dark:text-white">Special Instructions:</h4>
                   <p className="text-gray-600 dark:text-gray-400">{order.special_instructions}</p>
                 </div>
               )}
             </div>
+            
+            {/* FIXED: Order Summary with correct breakdown */}
             <div>
-              <h4 className="font-semibold mb-2">Order Summary:</h4>
-              <div className="space-y-1">
+              <h4 className="font-semibold mb-2 text-gray-800 dark:text-white">Order Summary:</h4>
+              <div className="space-y-1 text-gray-700 dark:text-gray-300">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${parseFloat(order.total_amount).toFixed(2)}</span>
+                  <span>{breakdown.subtotal} Br</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee:</span>
-                  <span>$2.99</span>
+                  <span>{breakdown.deliveryFee} Br</span>
                 </div>
-                <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                <div className="flex justify-between">
+                  <span>Tax (5%):</span>
+                  <span>{breakdown.tax} Br</span>
+                </div>
+                <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white">
                   <span>Total:</span>
-                  <span>${(parseFloat(order.total_amount) + 2.99).toFixed(2)}</span>
+                  <span>{breakdown.total} Br</span>
                 </div>
               </div>
+              
+              {/* Payment Status */}
+              {order.payment_method && (
+                <div className="mt-3 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Payment: {order.payment_method === 'cash' ? '💵 Cash on Delivery' : '🌐 Online (Chapa)'}
+                  </p>
+                  {order.payment_status && (
+                    <p className={`text-sm mt-1 ${
+                      order.payment_status === 'paid' 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : 'text-yellow-600 dark:text-yellow-400'
+                    }`}>
+                      Status: {order.payment_status === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
           {/* Timestamps */}
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <h4 className="font-semibold mb-2">Order Timeline:</h4>
-            <div className="space-y-1 text-sm">
+            <h4 className="font-semibold mb-2 text-gray-800 dark:text-white">Order Timeline:</h4>
+            <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
               {order.created_at && (
                 <p>📅 Ordered: {formatDate(order.created_at)}</p>
               )}
